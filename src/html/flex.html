@@ -45,24 +45,126 @@
   </section>
   <section>
     <style>
-      .wrap{
+      .container {
+        margin-top: 10px;
+        border: 1px solid black;
+      }
 
-      }
-      .float-left{
+      .float-left {
         float: left;
+        width: 50%;
       }
-      .float-right{
+
+      .float-right {
         float: right;
+        width: 50%;
       }
-      .clear{
+
+      .clear {
         clear: both;
       }
     </style>
-    <div class="wrap">
-      <div class="float-left">float-left</div>
-      <div class="float-right">float-right</div>
+    <div class="container">
+      <div class="float-left">Float left</div>
+      <div class="float-right">Float right</div>
       <div class="clear"></div>
     </div>
+    <div>bfc outer</div>
   </section>
+  <section>
+    <style>
+      .left{
+        width: 200px;
+        float: left;
+      }
+      .right{
+        width: 200px;
+        float: right;
+      }
+      .middle{
+        margin-left: 200px;
+        margin-right: 200px;
+      }
+
+      .flex-container{
+        display: flex;
+        height: 20px;
+      }
+      .flex-left{
+        width: 200px;
+      }
+      .flex-middle{
+        flex: 1;
+      }
+      .flex-right{
+        width: 200px;
+      }
+
+      .grid-container{
+        display: grid;
+        grid-template-columns: 200px 1fr 200px;
+        height: 50px;
+      }
+    </style>
+    <div class="container">
+      <div class="left">left</div>
+      <div class="middle">middle</div>
+      <div class="right">right</div>
+    </div>
+    <div class="flex-container">
+      <div class="flex-left">flex-left</div>
+      <div class="flex-middle">flex-middle</div>
+      <div class="flex-right">flex-right</div>
+    </div>
+    <div class="grid-container">
+      <div class="grid-left">grid-left</div>
+      <div class="grid-middle">grid-middle</div>
+      <div class="grid-right">grid-right</div>
+    </div>
+  </section>
+
+  <section>
+    <style>
+      .position-container{
+        margin-top: 10px;
+        overflow: auto;
+      }
+      .position-item{
+        width: 100px;
+        height: 50px;
+        position: absolute;
+        top: -100px;
+        background: pink;
+      }
+    </style>
+    <div class="position-container">
+      <div class="position-item">position-item</div>
+    </div>
+  </section>
+  <script>
+    const debounce = function (fn, delay) {
+      let timer
+      let isFirst = true
+      return function (...arg) {
+        if (isFirst) {
+          isFirst = false
+          timer = setTimeout(() => {
+            fn(...arg)
+          }, delay)
+        } else {
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timer = setTimeout(() => {
+            fn(...arg)
+          }, delay)
+        }
+      }
+    }
+    function scrollContent(e) {
+      console.log(e)
+    }
+    window.addEventListener('scroll', debounce(scrollContent, 200))
+  </script>
 </body>
 </html>
