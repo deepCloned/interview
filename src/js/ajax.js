@@ -1,28 +1,44 @@
-function ajax(options) {
-  const {
+export default class Request {
+  static getRequest({
     url,
     method = 'GET',
-    data = {}
-  } = options
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open(method, url, true)
-    console.log(xhr)
-    xhr.setRequestHeader('Content-Type', 'application/json')
-    xhr.setRequestHeader('token', 'json')
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-        resolve(xhr.responseText)
-      } else {
-        reject(xhr.responseText)
+    data = {},
+    headers = {},
+    timeout = 0
+  }) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open(method, url)
+      xhr.timeout = timeout
+      xhr.setRequestHeader('appkey', baseConfig.APPKEY)
+      Object.keys(headers).forEach(key => {
+        xhr.setRequestHeader(key, headers[key])
+      })
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.response))
+          } catch (err) {
+            reject(new Error('Invalid JSON response'))
+          }
+        }
       }
-    }
-    if (['HEAD', 'GET'].includes(method)) {
-      xhr.send(null)
-    } else {
-      xhr.send(data)
-    }
-  })
+
+      xhr.onerror = () => {
+        reject(new Error('Request failed'))
+      }
+
+      xhr.ontimeout = () => {
+        reject(new Error('Request time out'))
+      }
+      if (['GET', 'HEAD'].includes(method)) {
+        xhr.send()
+      } else {
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.send(data)
+      }
+    })
+  }
 }
 
 ajax({

@@ -190,7 +190,48 @@ Ajax（Asynchronous JavaScript and XML）即异步 JavaScript 和 XML，是一�
 Ajax封装
 
 ```
+export default class Request {
+  static getRequest({
+    url,
+    method = 'GET',
+    data = {},
+    headers = {},
+    timeout = 0
+  }) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open(method, url)
+      xhr.timeout = timeout
+      xhr.setRequestHeader('appkey', baseConfig.APPKEY)
+      Object.keys(headers).forEach(key => {
+        xhr.setRequestHeader(key, headers[key])
+      })
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.response))
+          } catch (err) {
+            reject(new Error('Invalid JSON response'))
+          }
+        }
+      }
 
+      xhr.onerror = () => {
+        reject(new Error('Request failed'))
+      }
+
+      xhr.ontimeout = () => {
+        reject(new Error('Request time out'))
+      }
+      if (['GET', 'HEAD'].includes(method)) {
+        xhr.send()
+      } else {
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.send(data)
+      }
+    })
+  }
+}
 ```
 
 TCP/IP 协议是一种网络通信协议，它定义了数据如何在网络中传输和路由。TCP/IP 协议是 Internet 上数据通信的基础，它包括两个分层协议：TCP（传输控制协议）和 IP（互联网协议）。
@@ -203,3 +244,33 @@ HTTP（Hypertext Transfer Protocol）协议是一种基于 TCP/IP 协议的应�
 + 3xx 重定向：表示需要进一步操作以完成请求，如 301 Moved Permanently 表示所请求的资源已永久移动到新位置。
 + 4xx 客户端错误：表示客户端发送的请求有误，如 400 Bad Request 表示请求无效，401 Unauthorized 表示未经授权，403 Forbidden 表示拒绝访问，404 Not Found 表示请求的资源不存在等。
 + 5xx 服务器错误：表示服务器无法完成请求，如 500 Internal Server Error 表示服务器内部错误，503 Service Unavailable 表示服务器暂时无法处理请求等。
+
+开发项目时设置代理
+
+create-react-app 项目中，两种方式
+
++ package.json 中添加 proxy
+```
+proxy: ''http://se.talelin.com/v1'
+```
+
++ 借助中间件 http-proxy-middleware
+setupProxy.js (需要放在src目录下，否则无法生效)
+
+```
+const { createProxyMiddleware } = require('http-proxy-middleware')
+
+module.exports = function (app) {
+  app.use(
+    '/api',
+    createProxyMiddleware({
+      target: 'http://se.talelin.com/v1',
+      changeOrigin: true,
+      pathRewrite: {
+        "^/api": ""
+      }
+    })
+  )
+}
+```
+*git撤销commit: git reset --soft HEAD^*
