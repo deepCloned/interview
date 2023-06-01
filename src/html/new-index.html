@@ -8,17 +8,17 @@
 </head>
 <body>
   <div id="app">{{version}}</div>
-  <script src="../js/ajax.js"></script>
-  <script src="../js/vue.js"></script>
+  <script src="../js/vue3.js"></script>
   <script>
-    new Vue({
-      el: '#app',
+    const { createApp } = Vue
+
+    createApp({
       data() {
         return {
-          version: '2.0'
+          version: '3.0'
         }
       }
-    })
+    }).mount('#app')
   </script>
 </body>
 </html>

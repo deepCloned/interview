@@ -274,3 +274,24 @@ module.exports = function (app) {
 }
 ```
 *git撤销commit: git reset --soft HEAD^*
+
+#### 熟练使用Vue，结合 ElementUI、Vant 等前端库，能够快速实现页面的开发，了解Vue的实现原理
+
+##### vue2
++ Vue.js如何实现响应式数据绑定？
+  - 1、Object.defineProperty()方法
+  Vue.js使用Object.defineProperty()方法实现响应式数据绑定。该方法可以定义一个对象的属性，以便在读取和设置属性值时触发一些逻辑操作。在Vue.js中，数据对象中的每个属性都被定义为一个可观察的属性，并且属性的读取和设置都被拦截，以便在属性值发生变化时触发视图的更新
+  - 2、依赖追踪
+    Vue.js通过依赖追踪来自动追踪数据对象属性的依赖关系。当模板中使用了数据对象属性时，Vue.js会自动建立一个依赖关系，将模板和数据对象属性联系起来。当数据对象属性发生变化时，Vue.js会自动触发视图的更新。
+  - 3、派发更新
+    Vue.js通过触发数据对象属性的setter函数来派发更新。当数据对象属性发生变化时，Vue.js会调用属性的setter函数，并通知相关的依赖关系进行更新。这样，Vue.js就能够保证数据和视图的自动同步。
+
++ Vue.js中的生命周期钩子有哪些？
++ Vue.js中的computed和watcher有什么区别？
++ Vue.js中的组件通信有哪些方式？
++ Vue.js中的路由有哪些功能？
++ Vue.js中的v-model指令有什么作用？
++ Vue.js如何实现懒加载？
+
+##### vue3
++ vue3如何实现响应式数据绑定？
