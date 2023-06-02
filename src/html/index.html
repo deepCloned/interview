@@ -7,15 +7,156 @@
   <title>Document</title>
 </head>
 <body>
-  <div id="app">{{version}}</div>
+  <div id="app">
+    <div>{{totalQuantity}}</div>
+    <div>{{totalPrice}}</div>
+    <button @click="addToCart">addToCart</button>
+  </div>
+  <div id="event">
+    <child-one></child-one>
+    <child-two></child-two>
+  </div>
+  <div id="vuex">
+    <div>{{count}}</div>
+    <button @click="add">add</button>
+    <button @click="reduce">reduce</button>
+  </div>
+  <script src="https://unpkg.com/vuex@2.0.0/dist/vuex.js"></script>
   <script src="../js/ajax.js"></script>
   <script src="../js/vue.js"></script>
   <script>
     new Vue({
       el: '#app',
-      data() {
-        return {
-          version: '2.0'
+      data: {
+        cart: [
+          { name: '商品1', price: 10, quantity: 2 },
+          { name: '商品2', price: 20, quantity: 1 }
+        ]
+      },
+      computed: {
+        totalQuantity: function () {
+          return this.cart.reduce(function (total, item) {
+            return total + item.quantity
+          }, 0)
+        },
+        totalPrice: function () {
+          return this.cart.reduce(function (total, item) {
+            return total + item.price * item.quantity
+          }, 0)
+        }
+      },
+      watch: {
+        cart: function () {
+          this.totalQuantity = this.cart.reduce(function (total, item) {
+            return total + item.quantity
+          }, 0)
+          this.totalPrice = this.cart.reduce(function (total, item) {
+            return total + item.price * item.quantity
+          }, 0)
+        }
+      },
+      methods: {
+        addToCart: function (product) {
+          var product = {
+            name: `商品${Math.random()}`,
+            price: 24,
+            quantity: 1
+          }
+          var found = this.cart.find(function (item) {
+            return item.name === product.name
+          })
+          if (found) {
+            found.quantity++
+          } else {
+            this.cart.push({
+              name: product.name,
+              price: product.price,
+              quantity: 1
+            })
+          }
+        }
+      }
+    })
+  </script>
+  <script>
+    const eventBus = new Vue()
+    Vue.component('child-one', {
+      template: `<div>
+        <div>child-one</div>
+        <button @click="eventEmit">event emit</button>
+      </div>`,
+      methods: {
+        eventEmit() {
+          eventBus.$emit('child-one', {
+            from: 'child-one'
+          })
+        }
+      },
+      created() {
+        eventBus.$on('child-two', function (e) {
+          console.log(e)
+        })
+      },
+      beforeDestroy() {
+        eventBus.$off()
+      }
+    })
+    Vue.component('child-two', {
+      template: `<div>
+        <div>child-two</div>
+        <button @click="eventEmit">event emit</button>
+      </div>`,
+      methods: {
+        eventEmit() {
+          eventBus.$emit('child-two', {
+            from: 'child-two'
+          })
+        }
+      },
+      created() {
+        eventBus.$on('child-one', function (e) {
+          console.log(e)
+        })
+      },
+      beforeDestroy() {
+        eventBus.$off()
+      }
+    })
+    new Vue({
+      el: '#event'
+    })
+  </script>
+  <script>
+    // vuex
+    Vue.use(Vuex)
+    const store = new Vuex.Store({
+      state: {
+        count: 0
+      },
+      mutations: {
+        increment(state) {
+          state.count++
+        },
+        decrement(state) {
+          state.count--
+        }
+      }
+    })
+
+    new Vue({
+      el: '#vuex',
+      store: store,
+      computed: {
+        count() {
+          return this.$store.state.count
+        }
+      },
+      methods: {
+        add() {
+          this.$store.commit('increment')
+        },
+        reduce() {
+          this.$store.commit('decrement')
         }
       }
     })

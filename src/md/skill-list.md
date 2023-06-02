@@ -287,8 +287,52 @@ module.exports = function (app) {
     Vue.js通过触发数据对象属性的setter函数来派发更新。当数据对象属性发生变化时，Vue.js会调用属性的setter函数，并通知相关的依赖关系进行更新。这样，Vue.js就能够保证数据和视图的自动同步。
 
 + Vue.js中的生命周期钩子有哪些？
+  - beforeCreate: 在实例初始化之后,进行数据侦听和事件/侦听器的配置之前同步调用。
+  - created: 在实例创建完成后被立即同步调用,数据侦听、计算属性、方法、事件/侦听器的回调函数已经配置完成，但未挂载，不能访问$el
+  - beforeMount: 在挂载之前调用，此时首次执行render函数。
+  - mounted: 挂载完成，不会保证所有的子组件都挂载完成。
+  - beforeUpdate: 在数据发生改变后，DOM 被更新之前被调用。
+  - updated: 在数据更改导致的虚拟 DOM 重新渲染和更新完毕之后被调用。你应该避免在此期间更改状态,可能会造成死循环。
+  - activated: 被 keep-alive 缓存的组件激活时调用。
+  - deactivated: 被 keep-alive 缓存的组件失活时调用。
+  - beforeDestroy: 实例销毁之前调用。在这一步，实例仍然完全可用。
+  - destroyed: 实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。
+  - errorCaptured: 在捕获一个来自后代组件的错误时被调用。
+  *服务器端渲染执行的生命周期：beforeCreate created*
 + Vue.js中的computed和watcher有什么区别？
+  首先，computed属性是基于它的依赖缓存的，只有当依赖的属性发生变化时，才会重新计算。这意味着计算结果会被缓存起来，并且只有在依赖的属性发生变化时才会重新计算。这样可以避免不必要的计算，提高应用程序的性能。
+
+  与此不同，watcher是在数据变化时立即执行的，它并不会缓存计算结果。每当被监听的数据发生变化时，watcher都会立即执行相应的回调函数。这样可以在数据变化时立即执行一些异步操作或更新界面等操作。
+
+  另外，computed属性还有一个特殊的getter和setter函数，可以通过setter函数来监听属性的变化并执行相应的操作。这样可以将computed属性转换成一个可读写的属性，并在写入属性值时执行一些操作。
+
+  总的来说，computed属性和watcher的缓存机制有所不同，computed属性是基于依赖缓存的，只有在依赖的属性发生变化时才会重新计算，而watcher则是在数据变化时立即执行的。在实际开发中，可以根据具体的需求选择合适的数据监听机制。
 + Vue.js中的组件通信有哪些方式？
+  - 父子组件：父组件通过props传值给子组件，子组件通过$emit触发自定义事件，父组件通过注册自定义事件监听器
+  - 兄弟组件: 通过共同的父组件或者vuex
+  - 跨级组件：通过vuex
+  - eventBus: 事件总线是一个全局的事件中心，可以用来在任何两个组件之间进行通信，它通常是一个空的 Vue 实例，可以在该实例上定义事件和监听器，组件之间可以通过该实例来进行通信。
+    ```
+    // 实例化一个vue实例
+    const eventBus = new Vue()
+    {
+      methods: {
+        eventEmit() {
+          eventBus.$emit('child-one', {
+            from: 'child-one'
+          })
+        }
+      },
+      created() {
+        eventBus.$on('child-two', function (e) {
+          console.log(e)
+        })
+      },
+      beforeDestroy() {
+        eventBus.$off()
+      }
+    }
+    ```
 + Vue.js中的路由有哪些功能？
 + Vue.js中的v-model指令有什么作用？
 + Vue.js如何实现懒加载？
